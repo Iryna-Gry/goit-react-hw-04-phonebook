@@ -5,10 +5,11 @@ import { ContactList } from './contactList/ContactList';
 import { Form } from './form/Form';
 import { SearchInput } from './searchInput/SearchInput';
 import { nanoid } from 'nanoid';
+import { getLocalStorageData } from './services/getLocalStorageData';
 
 export const App = () => {
   const [contacts, setContacts] = useState(() =>
-    JSON.parse(window.localStorage.getItem('contacts'))
+    getLocalStorageData('contacts')
   );
   const [filter, setFilter] = useState('');
   useEffect(() => {
@@ -23,8 +24,10 @@ export const App = () => {
         prevState.some(item => item.name.toLowerCase() === name.toLowerCase())
       ) {
         alert(`${name} is already in contacts`);
+        return [...prevState];
       } else if (prevState.some(item => item.number === number)) {
         alert(`${number} is already in contacts`);
+        return [...prevState];
       } else {
         return [...prevState, { id: nanoid(), name, number }];
       }
@@ -32,7 +35,7 @@ export const App = () => {
   };
   const filteredContacts = () => {
     const normalisedFilter = filter.toLowerCase();
-    return contacts.filter(item =>
+    return contacts?.filter(item =>
       item.name.toLowerCase().includes(normalisedFilter)
     );
   };
